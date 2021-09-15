@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "target": "es2020",
+    "module": "commonJs",
+    "baseUrl": ".",
+    "paths": {
+      "#applications/*": [
+        "./src/Applications/*"
+      ],
+      "#commons/*": [
+        "./src/Commons/*"
+      ],
+      "#domains/*": [
+        "./src/Domains/*"
+      ],
+      "#infrastructures/*": [
+        "./src/Infrastructures/*"
+      ],
+      "#interfaces/*": [
+        "./src/Interfaces/*"
+      ],
+      "#tests/*": [
+        "./tests/*"
+      ]
+    }
+  },
+  "exclude": [
+    "dist",
+    "node_modules",
+    "build",
+    ".vscode",
+    ".nuxt",
+    "coverage",
+    "jspm_packages",
+    "tmp",
+    "temp",
+    "bower_components",
+    ".npm",
+    ".yarn"
+  ],
+  "typeAcquisition": {
+    "enable": true
+  }
+}
