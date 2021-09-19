@@ -30,28 +30,6 @@ describe('CommentRepository postgres', () => {
   });
 
   describe('addComment function', () => {
-    // it('should throw NotFoundError when trying to comment at unavailable thread', async () => {
-    //   // Arrange
-    //   const addComment = new AddComment({
-    //     threadId: 'thread-123',
-    //     content: 'A commnet',
-    //     credentialId: 'user-123',
-    //   });
-    //   const fakeIdGenerator = () => '123';
-    //   const commentRepositoryPostgres = new CommentRepositoryPostgres(
-    //     pool,
-    //     fakeIdGenerator
-    //   );
-
-    //   // Action
-    //   const addedComment = await commentRepositoryPostgres.addComment(
-    //     addComment
-    //   );
-
-    //   // Assert
-    //   expect(addedComment).rejects.toThrowError(NotFoundError);
-    // });
-
     it('should persist added comment and return it correctly', async () => {
       // Arrange
       const addComment = new AddComment({
@@ -228,6 +206,7 @@ describe('CommentRepository postgres', () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const payload = {
+        replacement: '**komentar telah dihapus**',
         commentId: 'comment-123',
         credentialId: 'user-123',
       };
@@ -241,7 +220,7 @@ describe('CommentRepository postgres', () => {
       const deletedComment = await CommentsTableTestHelper.findCommentById(
         payload.commentId,
       );
-      expect(deletedComment[0].content).toEqual('**komentar telah dihapus**');
+      expect(deletedComment[0].content).toEqual(payload.replacement);
       expect(deletedComment[0].deleted_at).toBeDefined();
     });
   });
@@ -251,6 +230,7 @@ describe('CommentRepository postgres', () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const payload = {
+        replacement: '**balasan telah dihapus**',
         replyId: 'reply-123',
         credentialId: 'user-123',
       };
@@ -265,7 +245,7 @@ describe('CommentRepository postgres', () => {
       const deletedReply = await CommentsTableTestHelper.findCommentById(
         payload.replyId,
       );
-      expect(deletedReply[0].content).toEqual('**balasan telah dihapus**');
+      expect(deletedReply[0].content).toEqual(payload.replacement);
       expect(deletedReply[0].deleted_at).toBeDefined();
     });
   });

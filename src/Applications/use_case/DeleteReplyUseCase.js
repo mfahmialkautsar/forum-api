@@ -12,6 +12,7 @@ class DeleteReplyUseCase {
       threadId, commentId, replyId, credentialId,
     } = useCasePayload;
     const deleteReply = new DeleteReply({
+      replacement: '**balasan telah dihapus**',
       threadId,
       parentCommentId: commentId,
       replyId,

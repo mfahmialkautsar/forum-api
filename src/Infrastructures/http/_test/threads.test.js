@@ -436,7 +436,7 @@ describe('/threads endpoint', () => {
           title: 'The title',
           body: 'Hi mom!',
           username: userPayload.username,
-          date: new Date('2006-07-03 17:18:43 +0700').toISOString(),
+          date: '2006-07-03T17:18:43+07:00',
         };
         await UsersTableTestHelper.addUser(userPayload);
         await ThreadsTableTestHelper.addThread(threadPayload);

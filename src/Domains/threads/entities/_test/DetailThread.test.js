@@ -1,4 +1,3 @@
-const DetailComment = require('#domains/comments/entities/DetailComment');
 const DetailThread = require('../DetailThread');
 
 describe('DetailThread entity', () => {
@@ -8,7 +7,7 @@ describe('DetailThread entity', () => {
       title: 'The title',
       body: 'Hi mom!',
       username: 'bruce',
-      date: new Date('2006-07-03 17:18:43 +0700'),
+      date: (new Date()).toISOString(),
     };
 
     // Action and Assert
@@ -20,12 +19,12 @@ describe('DetailThread entity', () => {
   it('should throw error when payload did not meet data types specification', () => {
     // Arrange
     const payload = {
-      id: 123,
+      id: 'thread-321',
       title: true,
       body: {},
       username: [],
-      date: 'today',
-      comments: '[]',
+      date: 12,
+      comments: 1,
     };
 
     // Action and Assert
@@ -40,15 +39,14 @@ describe('DetailThread entity', () => {
       id: 'thread-321',
       title: 'The title',
       body: 'Hi mom!',
-      date: new Date('2006-07-03 17:18:43 +0700'),
+      date: (new Date()).toISOString(),
       username: 'bruce',
-      comments: [
-        new DetailComment({
-          id: 'comment-123',
-          content: 'A comment',
-          date: new Date('2006-07-03 17:18:43 +0700'),
-          username: 'bruce',
-        }),
+      comments: [{
+        id: 'comment-123',
+        content: 'A comment',
+        date: (new Date()).toISOString(),
+        username: 'bruce',
+      },
       ],
     };
 

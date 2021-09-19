@@ -5,10 +5,7 @@ const ThreadsTableTestHelper = require('#tests/ThreadsTableTestHelper');
 const AddedThread = require('#domains/threads/entities/AddedThread');
 const UsersTableTestHelper = require('#tests/UsersTableTestHelper');
 const NotFoundError = require('#commons/exceptions/NotFoundError');
-// const GetDetailThread = require('#domains/threads/entities/GetDetailThread');
-// const AuthorizationError = require('#commons/exceptions/AuthorizationError');
 const DetailThread = require('#domains/threads/entities/DetailThread');
-const DetailComment = require('#domains/comments/entities/DetailComment');
 const CommentsTableTestHelper = require('#tests/CommentsTableTestHelper');
 
 describe('ThreadRepositoryPostgres', () => {
@@ -89,56 +86,6 @@ describe('ThreadRepositoryPostgres', () => {
     });
   });
 
-  // describe('verifyOwnership', () => {
-  //   it('should throw NotFoundError when thred not found', async () => {
-  //     // Arrange
-  //     const getDetailThread = new GetDetailThread({
-  //       threadId: 'thread-123',
-  //       userId: 'user-123',
-  //     });
-  //     const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-
-  //     // Action & Assert
-  //     await expect(
-  //       threadRepositoryPostgres.verifyOwnership(getDetailThread)
-  //     ).rejects.toThrowError(NotFoundError);
-  //   });
-
-  //   it('should throw AuthorizationError when user is not thread owner', async () => {
-  //     // Arrange
-  //     await UsersTableTestHelper.addUser({
-  //       id: 'user-321',
-  //       username: 'decoding',
-  //     });
-  //     await ThreadsTableTestHelper.addThread({ credentialId: 'user-321' });
-  //     const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-  //     const getDetailThread = new GetDetailThread({
-  //       threadId: 'thread-123',
-  //       userId: 'user-123',
-  //     });
-
-  //     // Action & Assert
-  //     await expect(
-  //       threadRepositoryPostgres.verifyOwnership(getDetailThread)
-  //     ).rejects.toThrowError(AuthorizationError);
-  //   });
-
-  //   it('should resolve when ownership verified', async () => {
-  //     // Arrange
-  //     await ThreadsTableTestHelper.addThread({});
-  //     const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-  //     const getDetailThread = new GetDetailThread({
-  //       threadId: 'thread-123',
-  //       userId: 'user-123',
-  //     });
-
-  //     // Action
-  //     await expect(
-  //       threadRepositoryPostgres.verifyOwnership(getDetailThread)
-  //     ).resolves.not.toThrowError();
-  //   });
-  // });
-
   describe('getDetailThreadById function', () => {
     it('should throw NotFoundError when thread not found', async () => {
       // Arrange
@@ -167,7 +114,7 @@ describe('ThreadRepositoryPostgres', () => {
           title: 'The title',
           body: 'Hi mom!',
           username: 'bruce',
-          date: new Date('2006-07-03 17:18:43 +0700'),
+          date: '2006-07-03T17:18:43+07:00',
         }),
       );
     });
@@ -179,7 +126,7 @@ describe('ThreadRepositoryPostgres', () => {
         content: 'A commnet',
         credentialId: 'user-123',
         threadId: 'thread-321',
-        date: new Date('2006-07-03 17:18:43 +0700'),
+        date: '2006-07-03T17:18:43+07:00',
       };
       await ThreadsTableTestHelper.addThread({ id: commentPayload.threadId });
       await CommentsTableTestHelper.addComment(commentPayload);
@@ -197,14 +144,13 @@ describe('ThreadRepositoryPostgres', () => {
           title: 'The title',
           body: 'Hi mom!',
           username: 'bruce',
-          date: new Date('2006-07-03 17:18:43 +0700'),
-          comments: [
-            new DetailComment({
-              id: commentPayload.id,
-              username: 'bruce',
-              date: commentPayload.date,
-              content: commentPayload.content,
-            }),
+          date: '2006-07-03T17:18:43+07:00',
+          comments: [{
+            id: commentPayload.id,
+            username: 'bruce',
+            date: commentPayload.date,
+            content: commentPayload.content,
+          },
           ],
         }),
       );
@@ -217,7 +163,7 @@ describe('ThreadRepositoryPostgres', () => {
         content: 'A commnet',
         credentialId: 'user-123',
         threadId: 'thread-321',
-        date: new Date('2006-07-03 17:18:43 +0700'),
+        date: '2006-07-03T17:18:43+07:00',
       };
       await ThreadsTableTestHelper.addThread({ id: commentPayload.threadId });
       await CommentsTableTestHelper.addComment(commentPayload);
@@ -242,23 +188,20 @@ describe('ThreadRepositoryPostgres', () => {
           title: 'The title',
           body: 'Hi mom!',
           username: 'bruce',
-          date: new Date('2006-07-03 17:18:43 +0700'),
-          comments: [
-            new DetailComment({
-              id: commentPayload.id,
+          date: '2006-07-03T17:18:43+07:00',
+          comments: [{
+            id: commentPayload.id,
+            username: 'bruce',
+            date: commentPayload.date,
+            content: commentPayload.content,
+            replies: [{
+              id: 'reply-123',
               username: 'bruce',
               date: commentPayload.date,
               content: commentPayload.content,
-              replies: [
-                new DetailComment({
-                  id: 'reply-123',
-                  parentCommentId: commentPayload.id,
-                  username: 'bruce',
-                  date: commentPayload.date,
-                  content: commentPayload.content,
-                }),
-              ],
-            }),
+            },
+            ],
+          },
           ],
         }),
       );

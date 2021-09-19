@@ -53,26 +53,26 @@ class CommentRepositoryPostgres extends CommentRepository {
   }
 
   async deleteComment(deleteComment) {
-    const { commentId, credentialId } = deleteComment;
+    const { replacement, commentId, credentialId } = deleteComment;
     const query = {
       text: `UPDATE comments
       SET deleted_at = CURRENT_TIMESTAMP,
-      content = '**komentar telah dihapus**'
-      WHERE id = $1 AND owner = $2`,
-      values: [commentId, credentialId],
+      content = $1
+      WHERE id = $2 AND owner = $3`,
+      values: [replacement, commentId, credentialId],
     };
 
     await this._pool.query(query);
   }
 
   async deleteReply(deleteReply) {
-    const { replyId, credentialId } = deleteReply;
+    const { replacement, replyId, credentialId } = deleteReply;
     const query = {
       text: `UPDATE comments
       SET deleted_at = CURRENT_TIMESTAMP,
-      content = '**balasan telah dihapus**'
-      WHERE id = $1 AND owner = $2`,
-      values: [replyId, credentialId],
+      content = $1
+      WHERE id = $2 AND owner = $3`,
+      values: [replacement, replyId, credentialId],
     };
 
     await this._pool.query(query);

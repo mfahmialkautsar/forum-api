@@ -8,7 +8,10 @@ class DeleteCommentUseCase {
   }
 
   async execute(useCasePayload) {
-    const deleteComment = new DeleteComment(useCasePayload);
+    const deleteComment = new DeleteComment({
+      replacement: '**komentar telah dihapus**',
+      ...useCasePayload,
+    });
     await this._threadRepository.verifyAvailableThread(deleteComment.threadId);
     await this._commentRepository.verifyAvailableComment(deleteComment.commentId);
     await this._commentRepository.verifyCommentOwner(

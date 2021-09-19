@@ -8,6 +8,7 @@ describe('DeleteReplyUseCase', () => {
   it('should orchestrating delete comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
+      replacement: '**balasan telah dihapus**',
       threadId: 'thread-123',
       commentId: 'comment-123',
       replyId: 'reply-123',
@@ -62,6 +63,7 @@ describe('DeleteReplyUseCase', () => {
     );
     expect(mockCommentRepository.deleteReply).toHaveBeenCalledWith(
       new DeleteReply({
+        replacement: useCasePayload.replacement,
         threadId: useCasePayload.threadId,
         parentCommentId: useCasePayload.commentId,
         replyId: useCasePayload.replyId,

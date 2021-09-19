@@ -8,6 +8,7 @@ describe('DeleteCommentUseCase', () => {
   it('should orchestrating delete comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
+      replacement: '**komentar telah dihapus**',
       threadId: 'thread-123',
       commentId: 'comment-123',
       credentialId: 'user-123',
@@ -55,6 +56,7 @@ describe('DeleteCommentUseCase', () => {
     );
     expect(mockCommentRepository.deleteComment).toHaveBeenCalledWith(
       new DeleteComment({
+        replacement: useCasePayload.replacement,
         threadId: useCasePayload.threadId,
         commentId: useCasePayload.commentId,
         credentialId: useCasePayload.credentialId,

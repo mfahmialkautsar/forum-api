@@ -12,12 +12,6 @@ describe('ThreadRepository interface', () => {
     await expect(
       threadRepository.verifyAvailableThread('thread-123'),
     ).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
-    // await expect(threadRepository.verifyOwnership({})).rejects.toThrowError(
-    //   'THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED'
-    // );
-    // await expect(
-    //   threadRepository.getThreadById('thread-123')
-    // ).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(
       threadRepository.getDetailThreadById('thread-123'),
     ).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');

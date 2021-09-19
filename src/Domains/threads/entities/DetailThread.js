@@ -25,7 +25,7 @@ class DetailThread {
       typeof id !== 'string'
       || typeof title !== 'string'
       || typeof body !== 'string'
-      || typeof date !== 'object'
+      || typeof date !== 'string'
       || typeof username !== 'string'
       || (comments && typeof comments !== 'object')
     ) {

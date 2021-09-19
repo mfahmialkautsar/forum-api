@@ -3,9 +3,10 @@ class DeleteReply {
     this._verifyPayload(payload);
 
     const {
-      threadId, parentCommentId, replyId, credentialId,
+      replacement, threadId, parentCommentId, replyId, credentialId,
     } = payload;
 
+    this.replacement = replacement;
     this.threadId = threadId;
     this.parentCommentId = parentCommentId;
     this.replyId = replyId;
@@ -13,14 +14,15 @@ class DeleteReply {
   }
 
   _verifyPayload({
-    threadId, parentCommentId, replyId, credentialId,
+    replacement, threadId, parentCommentId, replyId, credentialId,
   }) {
-    if (!threadId || !parentCommentId || !replyId || !credentialId) {
+    if (!replacement || !threadId || !parentCommentId || !replyId || !credentialId) {
       throw new Error('DELETE_REPLY.NOT_CONTAIN_NEEDED_PROPERTIES');
     }
 
     if (
-      typeof threadId !== 'string'
+      typeof replacement !== 'string'
+      || typeof threadId !== 'string'
       || typeof parentCommentId !== 'string'
       || typeof replyId !== 'string'
       || typeof credentialId !== 'string'

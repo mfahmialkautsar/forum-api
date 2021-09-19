@@ -1,5 +1,4 @@
 const DetailThread = require('#domains/threads/entities/DetailThread');
-// const GetDetailThread = require('#domains/threads/entities/GetDetailThread');
 const ThreadRepository = require('#domains/threads/ThreadRepository');
 const GetDetailThreadUseCase = require('../GetDetailThreadUseCase');
 
@@ -14,7 +13,7 @@ describe('GetDetailThreadUseCase', () => {
       title: 'The title',
       body: 'Hi mom!',
       username: 'bruce',
-      date: new Date('2006-07-03 17:18:43 +0700'),
+      date: '2006-07-03T17:18:43+07:00',
       comments: [],
     });
 
@@ -22,9 +21,6 @@ describe('GetDetailThreadUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
 
     /** mock needed functions */
-    // mockThreadRepository.verifyOwnership = jest
-    //   .fn()
-    //   .mockImplementation(() => Promise.resolve());
     mockThreadRepository.getDetailThreadById = jest
       .fn()
       .mockImplementation(() => Promise.resolve(expecteDetailThread));
@@ -38,9 +34,6 @@ describe('GetDetailThreadUseCase', () => {
 
     // Assert
     expect(detailThread).toStrictEqual(expecteDetailThread);
-    // expect(mockThreadRepository.verifyOwnership).toBeCalledWith(
-    //   new GetDetailThread(useCasePayload)
-    // );
     expect(mockThreadRepository.getDetailThreadById).toBeCalledWith(
       useCasePayload.threadId,
     );
