@@ -4,8 +4,8 @@ describe('RegisteredUser entity', () => {
   it('should throw error when payload does not contain needed properties', () => {
     // Arrange
     const payload = {
-      username: 'dicoding',
-      fullname: 'Dicoding Indonesia',
+      username: 'bruce',
+      fullname: 'Bruce Wayne',
     };
 
     // Action and Assert
@@ -28,8 +28,8 @@ describe('RegisteredUser entity', () => {
     // Arrange
     const payload = {
       id: 'user-123',
-      username: 'dicoding',
-      fullname: 'Dicoding Indonesia',
+      username: 'bruce',
+      fullname: 'Bruce Wayne',
     };
 
     // Action

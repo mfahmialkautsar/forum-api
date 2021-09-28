@@ -10,6 +10,34 @@ class CommentRepositoryPostgres extends CommentRepository {
     this._idGenerator = idGenerator;
   }
 
+  async getCommentsByThreadIdIgnoreRepliesOrderByDateAsc(threadId) {
+    const query = {
+      text: `SELECT c.id, content, username, date, c.deleted_at FROM comments c
+      INNER JOIN users u ON u.id = c.owner
+      WHERE thread_id = $1
+      ORDER BY date ASC`,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
+  async getCommentsByParentCommentIdIgnoreRepliesOrderByDateAsc(parentCommentId) {
+    const query = {
+      text: `SELECT c.id, content, username, date, c.deleted_at FROM comments c
+      INNER JOIN users u ON u.id = c.owner
+      WHERE parent_comment_id = $1
+      ORDER BY date ASC`,
+      values: [parentCommentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return result.rows;
+  }
+
   async addComment(addComment) {
     const {
       threadId,
@@ -52,27 +80,13 @@ class CommentRepositoryPostgres extends CommentRepository {
     return new AddedComment(result.rows[0]);
   }
 
-  async deleteComment(deleteComment) {
-    const { replacement, commentId, credentialId } = deleteComment;
+  async softDeleteComment(deleteComment) {
+    const { id } = deleteComment;
     const query = {
       text: `UPDATE comments
-      SET deleted_at = CURRENT_TIMESTAMP,
-      content = $1
-      WHERE id = $2 AND owner = $3`,
-      values: [replacement, commentId, credentialId],
-    };
-
-    await this._pool.query(query);
-  }
-
-  async deleteReply(deleteReply) {
-    const { replacement, replyId, credentialId } = deleteReply;
-    const query = {
-      text: `UPDATE comments
-      SET deleted_at = CURRENT_TIMESTAMP,
-      content = $1
-      WHERE id = $2 AND owner = $3`,
-      values: [replacement, replyId, credentialId],
+      SET deleted_at = CURRENT_TIMESTAMP
+      WHERE id = $1`,
+      values: [id],
     };
 
     await this._pool.query(query);

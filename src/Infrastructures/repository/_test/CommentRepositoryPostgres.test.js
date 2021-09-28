@@ -17,16 +17,66 @@ describe('CommentRepository postgres', () => {
       id: 'user-321',
       username: 'stark',
     });
+    await ThreadsTableTestHelper.addThread({});
   });
 
   afterEach(async () => {
-    await ThreadsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
+    await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
     await pool.end();
+  });
+
+  describe('getCommentsByThreadIdIgnoreRepliesOrderByDateAsc function', () => {
+    it('should return comments correctly', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({});
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      const detailComment = await commentRepositoryPostgres.getCommentsByThreadIdIgnoreRepliesOrderByDateAsc(
+        'thread-123',
+      );
+
+      // Assert
+      expect(detailComment).toStrictEqual([
+        {
+          id: 'comment-123',
+          content: 'A commnet',
+          username: 'bruce',
+          date: new Date('2006-07-03 17:18:43 +0700'),
+          deleted_at: null,
+        },
+      ]);
+    });
+  });
+
+  describe('getCommentsByParentCommentIdIgnoreRepliesOrderByDateAsc function', () => {
+    it('should return comments correctly', async () => {
+      // Arrange
+      await CommentsTableTestHelper.addComment({});
+      await CommentsTableTestHelper.addReply({});
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      const detailComment = await commentRepositoryPostgres.getCommentsByParentCommentIdIgnoreRepliesOrderByDateAsc(
+        'comment-123',
+      );
+
+      // Assert
+      expect(detailComment).toStrictEqual([
+        {
+          id: 'reply-123',
+          content: 'A commnet',
+          username: 'bruce',
+          date: new Date('2006-07-03 17:18:43 +0700'),
+          deleted_at: null,
+        },
+      ]);
+    });
   });
 
   describe('addComment function', () => {
@@ -42,7 +92,6 @@ describe('CommentRepository postgres', () => {
         pool,
         fakeIdGenerator,
       );
-      await ThreadsTableTestHelper.addThread({});
 
       // Action
       await commentRepositoryPostgres.addComment(addComment);
@@ -60,13 +109,13 @@ describe('CommentRepository postgres', () => {
         threadId: 'thread-123',
         content: 'A comment',
         credentialId: 'user-123',
+        deleted_at: null,
       });
       const fakeIdGenerator = () => '123';
       const commentRepositoryPostgres = new CommentRepositoryPostgres(
         pool,
         fakeIdGenerator,
       );
-      await ThreadsTableTestHelper.addThread({});
 
       // Action
       const addedComment = await commentRepositoryPostgres.addComment(
@@ -97,7 +146,6 @@ describe('CommentRepository postgres', () => {
         pool,
         fakeIdGenerator,
       );
-      await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({});
 
       // Action
@@ -122,7 +170,6 @@ describe('CommentRepository postgres', () => {
         pool,
         fakeIdGenerator,
       );
-      await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({});
 
       // Action
@@ -143,7 +190,6 @@ describe('CommentRepository postgres', () => {
     it('should throw NotFoundError when comment not found', async () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      await ThreadsTableTestHelper.addThread({});
 
       // Action & Assert
       await expect(
@@ -154,7 +200,6 @@ describe('CommentRepository postgres', () => {
     it('should not throw NotFoundError when comment is found', async () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({});
 
       // Action & Assert
@@ -168,7 +213,6 @@ describe('CommentRepository postgres', () => {
     it('should throw NotFoundError when comment not found', async () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      await ThreadsTableTestHelper.addThread({});
 
       // Action & Assert
       await expect(
@@ -184,7 +228,6 @@ describe('CommentRepository postgres', () => {
     it('should throw AuthorizationError when user is not comment owner', async () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({
         credentialId: 'user-321',
       });
@@ -201,52 +244,23 @@ describe('CommentRepository postgres', () => {
     });
   });
 
-  describe('deleteComment function', () => {
+  describe('softDeleteComment function', () => {
     it('should soft delete comment', async () => {
       // Arrange
       const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
       const payload = {
-        replacement: '**komentar telah dihapus**',
-        commentId: 'comment-123',
-        credentialId: 'user-123',
+        id: 'comment-123',
       };
-      await ThreadsTableTestHelper.addThread({});
       await CommentsTableTestHelper.addComment({});
 
       // Action
-      await commentRepositoryPostgres.deleteComment(payload);
+      await commentRepositoryPostgres.softDeleteComment(payload);
 
       // Assert
       const deletedComment = await CommentsTableTestHelper.findCommentById(
-        payload.commentId,
+        payload.id,
       );
-      expect(deletedComment[0].content).toEqual(payload.replacement);
       expect(deletedComment[0].deleted_at).toBeDefined();
-    });
-  });
-
-  describe('deleteReply function', () => {
-    it('should soft delete reply', async () => {
-      // Arrange
-      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
-      const payload = {
-        replacement: '**balasan telah dihapus**',
-        replyId: 'reply-123',
-        credentialId: 'user-123',
-      };
-      await ThreadsTableTestHelper.addThread({});
-      await CommentsTableTestHelper.addComment({});
-      await CommentsTableTestHelper.addReply({});
-
-      // Action
-      await commentRepositoryPostgres.deleteReply(payload);
-
-      // Assert
-      const deletedReply = await CommentsTableTestHelper.findCommentById(
-        payload.replyId,
-      );
-      expect(deletedReply[0].content).toEqual(payload.replacement);
-      expect(deletedReply[0].deleted_at).toBeDefined();
     });
   });
 });

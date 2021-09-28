@@ -13,7 +13,7 @@ describe('ThreadRepository interface', () => {
       threadRepository.verifyAvailableThread('thread-123'),
     ).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
     await expect(
-      threadRepository.getDetailThreadById('thread-123'),
+      threadRepository.getDetailThreadByIdIgnoreComments('thread-123'),
     ).rejects.toThrowError('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   });
 });

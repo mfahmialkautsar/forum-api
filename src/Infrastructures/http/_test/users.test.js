@@ -16,9 +16,9 @@ describe('/users endpoint', () => {
     it('should response 201 and persisted user', async () => {
       // Arrange
       const requestPayload = {
-        username: 'dicoding',
+        username: 'bruce',
         password: 'secret',
-        fullname: 'Dicoding Indonesia',
+        fullname: 'Bruce Wayne',
       };
       const server = await createServer(container);
 
@@ -39,7 +39,7 @@ describe('/users endpoint', () => {
     it('should response 400 when request payload not contain needed properties', async () => {
       // Arrange
       const requestPayload = {
-        fullname: 'Dicoding Indonesia',
+        fullname: 'Bruce Wayne',
         password: 'secret',
       };
       const server = await createServer(container);
@@ -61,9 +61,9 @@ describe('/users endpoint', () => {
     it('should response 400 when request payload not meet data types specification', async () => {
       // Arrange
       const requestPayload = {
-        username: 'dicoding',
+        username: 'bruce',
         password: 'secret',
-        fullname: ['Dicoding Indonesia'],
+        fullname: ['Bruce Wayne'],
       };
       const server = await createServer(container);
 
@@ -86,7 +86,7 @@ describe('/users endpoint', () => {
       const requestPayload = {
         username: 'dicodingindonesiadicodingindonesiadicodingindonesiadicoding',
         password: 'secret',
-        fullname: 'Dicoding Indonesia',
+        fullname: 'Bruce Wayne',
       };
       const server = await createServer(container);
 
@@ -107,9 +107,9 @@ describe('/users endpoint', () => {
     it('should response 400 when username contain restricted characters', async () => {
       // Arrange
       const requestPayload = {
-        username: 'dicoding indonesia',
+        username: 'bruce indonesia',
         password: 'secret',
-        fullname: 'Dicoding Indonesia',
+        fullname: 'Bruce Wayne',
       };
       const server = await createServer(container);
 
@@ -129,10 +129,10 @@ describe('/users endpoint', () => {
 
     it('should response 400 when username unavailable', async () => {
       // Arrange
-      await UsersTableTestHelper.addUser({ username: 'dicoding' });
+      await UsersTableTestHelper.addUser({ username: 'bruce' });
       const requestPayload = {
-        username: 'dicoding',
-        fullname: 'Dicoding Indonesia',
+        username: 'bruce',
+        fullname: 'Bruce Wayne',
         password: 'super_secret',
       };
       const server = await createServer(container);

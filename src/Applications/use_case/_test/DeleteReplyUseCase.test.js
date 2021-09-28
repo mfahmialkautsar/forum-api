@@ -8,7 +8,6 @@ describe('DeleteReplyUseCase', () => {
   it('should orchestrating delete comment action correctly', async () => {
     // Arrange
     const useCasePayload = {
-      replacement: '**balasan telah dihapus**',
       threadId: 'thread-123',
       commentId: 'comment-123',
       replyId: 'reply-123',
@@ -32,7 +31,7 @@ describe('DeleteReplyUseCase', () => {
     mockCommentRepository.verifyCommentOwner = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.deleteReply = jest
+    mockCommentRepository.softDeleteComment = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
 
@@ -61,12 +60,11 @@ describe('DeleteReplyUseCase', () => {
         credentialId: useCasePayload.credentialId,
       }),
     );
-    expect(mockCommentRepository.deleteReply).toHaveBeenCalledWith(
+    expect(mockCommentRepository.softDeleteComment).toHaveBeenCalledWith(
       new DeleteReply({
-        replacement: useCasePayload.replacement,
+        id: useCasePayload.replyId,
         threadId: useCasePayload.threadId,
         parentCommentId: useCasePayload.commentId,
-        replyId: useCasePayload.replyId,
         credentialId: useCasePayload.credentialId,
       }),
     );

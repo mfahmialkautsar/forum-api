@@ -3,14 +3,14 @@ const AddReplyUseCase = require('#applications/use_case/AddReplyUseCase');
 const AddThreadUseCase = require('#applications/use_case/AddThreadUseCase');
 const DeleteCommentUseCase = require('#applications/use_case/DeleteCommentUseCase');
 const DeleteReplyUseCase = require('#applications/use_case/DeleteReplyUseCase');
-const GetDetailThreadUseCase = require('#applications/use_case/GetDetailThreadUseCase');
+const GetDetailThreadWithCommentsAndRepliesUseCase = require('#applications/use_case/GetDetailThreadWithCommentsAndRepliesUseCase');
 
 class ThreadsHandler {
   constructor(container) {
     this._container = container;
 
     this.postThreadHandler = this.postThreadHandler.bind(this);
-    this.getThreadByIdHandler = this.getThreadByIdHandler.bind(this);
+    this.getThreadByIdWithCommentsAndRepliesHandler = this.getThreadByIdWithCommentsAndRepliesHandler.bind(this);
     this.postCommentHandler = this.postCommentHandler.bind(this);
     this.deleteCommentHandler = this.deleteCommentHandler.bind(this);
     this.postReplyHandler = this.postReplyHandler.bind(this);
@@ -36,12 +36,12 @@ class ThreadsHandler {
     return res;
   }
 
-  async getThreadByIdHandler(req) {
+  async getThreadByIdWithCommentsAndRepliesHandler(req) {
     const { threadId } = req.params;
-    const getDetailThreadUseCase = this._container.getInstance(
-      GetDetailThreadUseCase.name,
+    const getDetailThreadByIdWithCommentsAndRepliesUseCase = this._container.getInstance(
+      GetDetailThreadWithCommentsAndRepliesUseCase.name,
     );
-    const thread = await getDetailThreadUseCase.execute({
+    const thread = await getDetailThreadByIdWithCommentsAndRepliesUseCase.execute({
       threadId,
     });
 

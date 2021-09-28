@@ -8,19 +8,23 @@ class DeleteCommentUseCase {
   }
 
   async execute(useCasePayload) {
+    const { threadId, commentId, credentialId } = useCasePayload;
     const deleteComment = new DeleteComment({
-      replacement: '**komentar telah dihapus**',
-      ...useCasePayload,
+      id: commentId,
+      threadId,
+      credentialId,
     });
     await this._threadRepository.verifyAvailableThread(deleteComment.threadId);
-    await this._commentRepository.verifyAvailableComment(deleteComment.commentId);
+    await this._commentRepository.verifyAvailableComment(
+      deleteComment.id,
+    );
     await this._commentRepository.verifyCommentOwner(
       new VerifyCommentOwner({
-        commentId: deleteComment.commentId,
+        commentId: deleteComment.id,
         credentialId: deleteComment.credentialId,
       }),
     );
-    return this._commentRepository.deleteComment(deleteComment);
+    return this._commentRepository.softDeleteComment(deleteComment);
   }
 }
 

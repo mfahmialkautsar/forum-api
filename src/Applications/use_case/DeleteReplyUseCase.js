@@ -12,22 +12,21 @@ class DeleteReplyUseCase {
       threadId, commentId, replyId, credentialId,
     } = useCasePayload;
     const deleteReply = new DeleteReply({
-      replacement: '**balasan telah dihapus**',
+      id: replyId,
       threadId,
       parentCommentId: commentId,
-      replyId,
       credentialId,
     });
     await this._threadRepository.verifyAvailableThread(deleteReply.threadId);
     await this._commentRepository.verifyAvailableComment(deleteReply.parentCommentId);
-    await this._commentRepository.verifyAvailableComment(deleteReply.replyId);
+    await this._commentRepository.verifyAvailableComment(deleteReply.id);
     await this._commentRepository.verifyCommentOwner(
       new VerifyCommentOwner({
-        commentId: deleteReply.replyId,
+        commentId: deleteReply.id,
         credentialId: deleteReply.credentialId,
       }),
     );
-    return this._commentRepository.deleteReply(deleteReply);
+    return this._commentRepository.softDeleteComment(deleteReply);
   }
 }
 

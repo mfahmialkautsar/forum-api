@@ -6,7 +6,6 @@ const AddedThread = require('#domains/threads/entities/AddedThread');
 const UsersTableTestHelper = require('#tests/UsersTableTestHelper');
 const NotFoundError = require('#commons/exceptions/NotFoundError');
 const DetailThread = require('#domains/threads/entities/DetailThread');
-const CommentsTableTestHelper = require('#tests/CommentsTableTestHelper');
 
 describe('ThreadRepositoryPostgres', () => {
   beforeAll(async () => {
@@ -93,7 +92,7 @@ describe('ThreadRepositoryPostgres', () => {
 
       // Action & Assert
       await expect(
-        threadRepositoryPostgres.getDetailThreadById('thread-123'),
+        threadRepositoryPostgres.getDetailThreadByIdIgnoreComments('thread-123'),
       ).rejects.toThrowError(NotFoundError);
     });
 
@@ -103,7 +102,7 @@ describe('ThreadRepositoryPostgres', () => {
       const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
 
       // Action
-      const thread = await threadRepositoryPostgres.getDetailThreadById(
+      const thread = await threadRepositoryPostgres.getDetailThreadByIdIgnoreComments(
         'thread-321',
       );
 
@@ -114,95 +113,7 @@ describe('ThreadRepositoryPostgres', () => {
           title: 'The title',
           body: 'Hi mom!',
           username: 'bruce',
-          date: '2006-07-03T17:18:43+07:00',
-        }),
-      );
-    });
-
-    it('should return thread with comments correctly', async () => {
-      // Arrange
-      const commentPayload = {
-        id: 'comment-123',
-        content: 'A commnet',
-        credentialId: 'user-123',
-        threadId: 'thread-321',
-        date: '2006-07-03T17:18:43+07:00',
-      };
-      await ThreadsTableTestHelper.addThread({ id: commentPayload.threadId });
-      await CommentsTableTestHelper.addComment(commentPayload);
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-
-      // Action
-      const thread = await threadRepositoryPostgres.getDetailThreadById(
-        'thread-321',
-      );
-
-      // Assert
-      expect(thread).toStrictEqual(
-        new DetailThread({
-          id: 'thread-321',
-          title: 'The title',
-          body: 'Hi mom!',
-          username: 'bruce',
-          date: '2006-07-03T17:18:43+07:00',
-          comments: [{
-            id: commentPayload.id,
-            username: 'bruce',
-            date: commentPayload.date,
-            content: commentPayload.content,
-          },
-          ],
-        }),
-      );
-    });
-
-    it('should return thread with comments and replies correctly', async () => {
-      // Arrange
-      const commentPayload = {
-        id: 'comment-123',
-        content: 'A commnet',
-        credentialId: 'user-123',
-        threadId: 'thread-321',
-        date: '2006-07-03T17:18:43+07:00',
-      };
-      await ThreadsTableTestHelper.addThread({ id: commentPayload.threadId });
-      await CommentsTableTestHelper.addComment(commentPayload);
-      await CommentsTableTestHelper.addReply({
-        id: 'reply-123',
-        parentCommentId: commentPayload.id,
-        username: 'bruce',
-        date: commentPayload.date,
-        content: commentPayload.content,
-      });
-      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, {});
-
-      // Action
-      const thread = await threadRepositoryPostgres.getDetailThreadById(
-        'thread-321',
-      );
-
-      // Assert
-      expect(thread).toStrictEqual(
-        new DetailThread({
-          id: 'thread-321',
-          title: 'The title',
-          body: 'Hi mom!',
-          username: 'bruce',
-          date: '2006-07-03T17:18:43+07:00',
-          comments: [{
-            id: commentPayload.id,
-            username: 'bruce',
-            date: commentPayload.date,
-            content: commentPayload.content,
-            replies: [{
-              id: 'reply-123',
-              username: 'bruce',
-              date: commentPayload.date,
-              content: commentPayload.content,
-            },
-            ],
-          },
-          ],
+          date: new Date('2006-07-03T17:18:43+07:00'),
         }),
       );
     });

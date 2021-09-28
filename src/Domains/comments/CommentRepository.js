@@ -1,4 +1,12 @@
 class CommentRepository {
+  async getCommentsByThreadIdIgnoreRepliesOrderByDateAsc(threadId) {
+    throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
+  }
+
+  async getCommentsByParentCommentIdIgnoreRepliesOrderByDateAsc(parentCommentId) {
+    throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
+  }
+
   async addComment(addComment) {
     throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
   }
@@ -15,11 +23,7 @@ class CommentRepository {
     throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
   }
 
-  async deleteComment(deleteComment) {
-    throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
-  }
-
-  async deleteReply(deleteComment) {
+  async softDeleteComment(deleteComment) {
     throw new Error('COMMENT_REPOSITORY.MEHTOD_NOT_IMPLEMENTED');
   }
 }

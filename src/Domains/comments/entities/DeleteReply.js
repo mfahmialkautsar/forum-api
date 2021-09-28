@@ -3,28 +3,26 @@ class DeleteReply {
     this._verifyPayload(payload);
 
     const {
-      replacement, threadId, parentCommentId, replyId, credentialId,
+      id, threadId, parentCommentId, credentialId,
     } = payload;
 
-    this.replacement = replacement;
+    this.id = id;
     this.threadId = threadId;
     this.parentCommentId = parentCommentId;
-    this.replyId = replyId;
     this.credentialId = credentialId;
   }
 
   _verifyPayload({
-    replacement, threadId, parentCommentId, replyId, credentialId,
+    id, threadId, parentCommentId, credentialId,
   }) {
-    if (!replacement || !threadId || !parentCommentId || !replyId || !credentialId) {
+    if (!id || !threadId || !parentCommentId || !credentialId) {
       throw new Error('DELETE_REPLY.NOT_CONTAIN_NEEDED_PROPERTIES');
     }
 
     if (
-      typeof replacement !== 'string'
+      typeof id !== 'string'
       || typeof threadId !== 'string'
       || typeof parentCommentId !== 'string'
-      || typeof replyId !== 'string'
       || typeof credentialId !== 'string'
     ) {
       throw new Error('DELETE_REPLY.NOT_MEET_DATA_TYPES_SPECIFICATION');

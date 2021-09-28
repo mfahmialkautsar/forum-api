@@ -423,23 +423,41 @@ describe('/threads endpoint', () => {
         expect(responseJson.message).toEqual('thread tidak ditemukan');
       });
 
-      it('should response 200 and detail thread', async () => {
+      it('should response 200 and detail thread with comments and replies', async () => {
         // Arrange
         const userPayload = {
-          username: 'dicoding',
+          username: 'bruce',
         };
         const threadPayload = {
           id: 'thread-123',
         };
-        const expecteDetailThread = {
+        const expectedDetailThread = {
           id: threadPayload.id,
           title: 'The title',
           body: 'Hi mom!',
           username: userPayload.username,
-          date: '2006-07-03T17:18:43+07:00',
+          date: new Date('2006-07-03 17:18:43 +0700').toISOString(),
+          comments: [
+            {
+              id: 'comment-123',
+              content: 'A commnet',
+              username: 'bruce',
+              date: new Date('2006-07-03 17:18:43 +0700').toISOString(),
+              replies: [
+                {
+                  id: 'reply-123',
+                  content: 'A commnet',
+                  username: 'bruce',
+                  date: new Date('2006-07-03 17:18:43 +0700').toISOString(),
+                },
+              ],
+            },
+          ],
         };
         await UsersTableTestHelper.addUser(userPayload);
         await ThreadsTableTestHelper.addThread(threadPayload);
+        await CommentsTableTestHelper.addComment({});
+        await CommentsTableTestHelper.addReply({});
         const server = await createServer(container);
 
         // Action
@@ -453,7 +471,7 @@ describe('/threads endpoint', () => {
         expect(response.statusCode).toEqual(200);
         expect(responseJson.status).toEqual('success');
         expect(responseJson.data.thread).toBeDefined();
-        expect(responseJson.data.thread).toStrictEqual(expecteDetailThread);
+        expect(responseJson.data.thread).toStrictEqual(expectedDetailThread);
       });
     });
   });

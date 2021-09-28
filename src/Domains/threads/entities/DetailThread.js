@@ -3,7 +3,7 @@ class DetailThread {
     this._verifyPayload(payload);
 
     const {
-      id, title, body, date, username, comments,
+      id, title, body, date, username,
     } = payload;
 
     this.id = id;
@@ -11,11 +11,10 @@ class DetailThread {
     this.body = body;
     this.date = date;
     this.username = username;
-    this.comments = comments;
   }
 
   _verifyPayload({
-    id, title, body, date, username, comments,
+    id, title, body, date, username,
   }) {
     if (!id || !title || !body || !date || !username) {
       throw new Error('DETAIL_THREAD.NOT_CONTAIN_NEEDED_PROPERTIES');
@@ -25,9 +24,8 @@ class DetailThread {
       typeof id !== 'string'
       || typeof title !== 'string'
       || typeof body !== 'string'
-      || typeof date !== 'string'
+      || typeof date !== 'object'
       || typeof username !== 'string'
-      || (comments && typeof comments !== 'object')
     ) {
       throw new Error('DETAIL_THREAD.NOT_MEET_DATA_TYPES_SPECIFICATION');
     }

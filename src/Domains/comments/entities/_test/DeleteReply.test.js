@@ -4,7 +4,6 @@ describe('DeleteReply entity', () => {
   it('should throw error when payload does not contain needed properties', () => {
     // Arrange
     const payload = {
-      replacement: '**balasan telah dihapus**',
       threadId: 'thread-123',
       parentCommentId: 'comment-123',
       credentialId: 'user-123',
@@ -19,10 +18,9 @@ describe('DeleteReply entity', () => {
   it('should throw error when payload does not data types specification', () => {
     // Arrange
     const payload = {
-      replacement: '**balasan telah dihapus**',
+      id: ['comment-123'],
       threadId: true,
       parentCommentId: { s: 'comment-123' },
-      replyId: ['comment-123'],
       credentialId: 123,
     };
 
@@ -35,10 +33,9 @@ describe('DeleteReply entity', () => {
   it('should create deleteReply object correctly', () => {
     // Arrange
     const payload = {
-      replacement: '**balasan telah dihapus**',
+      id: 'reply-123',
       threadId: 'thread-123',
       parentCommentId: 'comment-123',
-      replyId: 'reply-123',
       credentialId: 'user-123',
     };
 
@@ -47,9 +44,9 @@ describe('DeleteReply entity', () => {
 
     // Assert
     expect(deleteReply).toBeInstanceOf(DeleteReply);
+    expect(deleteReply.id).toEqual(payload.id);
     expect(deleteReply.threadId).toEqual(payload.threadId);
     expect(deleteReply.parentCommentId).toEqual(payload.parentCommentId);
-    expect(deleteReply.replyId).toEqual(payload.replyId);
     expect(deleteReply.credentialId).toEqual(payload.credentialId);
   });
 });
