@@ -24,7 +24,7 @@ class DeleteCommentUseCase {
         credentialId: deleteComment.credentialId,
       }),
     );
-    return this._commentRepository.softDeleteComment(deleteComment);
+    await this._commentRepository.softDeleteComment(deleteComment);
   }
 }
 

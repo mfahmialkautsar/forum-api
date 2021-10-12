@@ -80,7 +80,7 @@ describe('CommentRepository postgres', () => {
   });
 
   describe('addComment function', () => {
-    it('should persist added comment and return it correctly', async () => {
+    it('should persist added comment', async () => {
       // Arrange
       const addComment = new AddComment({
         threadId: 'thread-123',
@@ -134,7 +134,7 @@ describe('CommentRepository postgres', () => {
   });
 
   describe('addReply function', () => {
-    it('should persist added comment and return it correctly', async () => {
+    it('should persist added comment', async () => {
       // Arrange
       const addReply = new AddReply({
         parentCommentId: 'comment-123',

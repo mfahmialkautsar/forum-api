@@ -1,7 +1,8 @@
 class GetDetailThreadWithCommentsAndRepliesUseCase {
-  constructor({ threadRepository, commentRepository }) {
+  constructor({ threadRepository, commentRepository, likeRepository }) {
     this._threadRepository = threadRepository;
     this._commentRepository = commentRepository;
+    this._likeRepository = likeRepository;
   }
 
   async execute(useCasePayload) {
@@ -16,36 +17,45 @@ class GetDetailThreadWithCommentsAndRepliesUseCase {
 
     if (comments) {
       const repliesPromises = [];
+      const likeCountsPromieses = [];
+
       comments.forEach((comment) => {
+        likeCountsPromieses.push(
+          this._likeRepository.getLikeCountsByCommentId(comment.id),
+        );
         repliesPromises.push(
           this._commentRepository.getCommentsByParentCommentIdIgnoreRepliesOrderByDateAsc(
             comment.id,
           ),
         );
       });
-      const replies = await Promise.all(repliesPromises);
 
-      comments = comments.map(({
-        id, content, username, date, deleted_at: deletedAt,
-      }, i) => ({
-        id,
-        content: deletedAt
-          ? '**komentar telah dihapus**'
-          : content,
-        username,
-        date,
-        replies: replies[i].map(({
-          // eslint-disable-next-line no-shadow
+      const replies = await Promise.all(repliesPromises);
+      const likeCounts = await Promise.all(likeCountsPromieses);
+
+      const getModifiedReplies = (i) => replies[i].map(
+        ({
           id, content, username, date, deleted_at: deletedAt,
         }) => ({
           id,
-          content: deletedAt
-            ? '**balasan telah dihapus**'
-            : content,
+          content: deletedAt ? '**balasan telah dihapus**' : content,
           username,
           date,
-        })),
-      }));
+        }),
+      );
+
+      comments = comments.map(
+        ({
+          id, content, username, date, deleted_at: deletedAt,
+        }, i) => ({
+          id,
+          content: deletedAt ? '**komentar telah dihapus**' : content,
+          username,
+          date,
+          replies: getModifiedReplies(i),
+          likeCount: parseInt(likeCounts[i], 10),
+        }),
+      );
 
       threadWithCommentsAndReplies = {
         ...threadWithCommentsAndReplies,

@@ -92,6 +92,13 @@ class CommentRepositoryPostgres extends CommentRepository {
     await this._pool.query(query);
   }
 
+  // async likeComment(likeComment) {
+  //   const {id} = likeComment;
+  //   const query = {
+  //     text: `UPDATE comments`
+  //   }
+  // }
+
   async verifyAvailableComment(commentId) {
     const query = {
       text: `SELECT * FROM comments

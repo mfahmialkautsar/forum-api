@@ -443,6 +443,7 @@ describe('/threads endpoint', () => {
               content: 'A commnet',
               username: 'bruce',
               date: new Date('2006-07-03 17:18:43 +0700').toISOString(),
+              likeCount: 0,
               replies: [
                 {
                   id: 'reply-123',
@@ -494,7 +495,7 @@ describe('/threads endpoint', () => {
         expect(responseJson.message).toEqual('Missing authentication');
       });
 
-      it("should response 403 when user tries to delete somebody's thread", async () => {
+      it("should response 403 when user tries to delete somebody's comment", async () => {
         // Arrange
         const accessToken = await ServerTestHelper.getAccessToken();
         await UsersTableTestHelper.addUser({
@@ -743,6 +744,91 @@ describe('/threads endpoint', () => {
         const response = await server.inject({
           method: 'DELETE',
           url: '/threads/thread-123/comments/comment-123/replies/reply-123',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        // Assert
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(200);
+        expect(responseJson.status).toEqual('success');
+      });
+    });
+  });
+
+  describe('when PUT /threads', () => {
+    describe('PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+      it('should response 401 when user not logged in', async () => {
+        // Arrange
+        const server = await createServer(container);
+
+        // Action
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/threads/thread-123/comments/comment-123/likes',
+        });
+
+        // Assert
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(401);
+        expect(responseJson.message).toEqual('Missing authentication');
+      });
+
+      it('should response 404 when thread not found', async () => {
+        // Arrange
+        const accessToken = await ServerTestHelper.getAccessToken();
+        const server = await createServer(container);
+
+        // Action
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/threads/thread-123/comments/comment-123/likes',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        // Assert
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(404);
+        expect(responseJson.status).toEqual('fail');
+        expect(responseJson.message).toEqual('thread tidak ditemukan');
+      });
+
+      it('should response 404 when comment not found', async () => {
+        // Arrange
+        const accessToken = await ServerTestHelper.getAccessToken();
+        await ThreadsTableTestHelper.addThread({});
+        const server = await createServer(container);
+
+        // Action
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/threads/thread-123/comments/comment-123/likes',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        // Assert
+        const responseJson = JSON.parse(response.payload);
+        expect(response.statusCode).toEqual(404);
+        expect(responseJson.status).toEqual('fail');
+        expect(responseJson.message).toEqual('comment tidak ditemukan');
+      });
+
+      it('should resopnse 200', async () => {
+        // Arrange
+        const accessToken = await ServerTestHelper.getAccessToken();
+        await ThreadsTableTestHelper.addThread({});
+        await CommentsTableTestHelper.addComment({});
+        const server = await createServer(container);
+
+        // Action
+        const response = await server.inject({
+          method: 'PUT',
+          url: '/threads/thread-123/comments/comment-123/likes',
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

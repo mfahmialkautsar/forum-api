@@ -1,4 +1,5 @@
 const CommentRepository = require('#domains/comments/CommentRepository');
+const LikeRepository = require('#domains/likes/LikeRepository');
 const DetailThread = require('#domains/threads/entities/DetailThread');
 const ThreadRepository = require('#domains/threads/ThreadRepository');
 const GetDetailThreadWithCommentsAndRepliesUseCase = require('../GetDetailThreadWithCommentsAndRepliesUseCase');
@@ -142,6 +143,7 @@ describe('GetDetailThreadWithCommentsAndRepliesUseCase', () => {
     /** create use case dependency */
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
+    const mockLikeRepository = new LikeRepository();
 
     /** mock needed functions */
     mockThreadRepository.getDetailThreadByIdIgnoreComments = jest
@@ -159,10 +161,12 @@ describe('GetDetailThreadWithCommentsAndRepliesUseCase', () => {
         deleted_at: new Date('2006-07-03 17:18:44 +0700'),
       })),
     ));
+    mockLikeRepository.getLikeCountsByCommentId = jest.fn(() => Promise.resolve('0'));
 
     const getDetailThreadWithCommentsAndRepliesUseCase = new GetDetailThreadWithCommentsAndRepliesUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
+      likeRepository: mockLikeRepository,
     });
 
     // Action
@@ -176,6 +180,7 @@ describe('GetDetailThreadWithCommentsAndRepliesUseCase', () => {
       comments: [
         {
           ...expectedComments[0],
+          likeCount: 0,
           replies: expectedReplies,
         },
       ],
@@ -186,6 +191,9 @@ describe('GetDetailThreadWithCommentsAndRepliesUseCase', () => {
     expect(
       mockCommentRepository.getCommentsByThreadIdIgnoreRepliesOrderByDateAsc,
     ).toBeCalledWith(expecteDetailThread.id);
+    expect(mockLikeRepository.getLikeCountsByCommentId).toBeCalledTimes(
+      expectedComments.length,
+    );
     expect(
       mockCommentRepository.getCommentsByThreadIdIgnoreRepliesOrderByDateAsc,
     ).toBeCalledTimes(expectedComments.length);
